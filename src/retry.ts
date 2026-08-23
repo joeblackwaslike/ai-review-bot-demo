@@ -11,6 +11,12 @@ export async function withRetry<T>(
   fn: () => Promise<T>,
   options: RetryOptions,
 ): Promise<T> {
+  if (!Number.isInteger(options.maxAttempts) || options.maxAttempts < 1) {
+    throw new RangeError(
+      `maxAttempts must be a positive integer, got ${options.maxAttempts}`,
+    );
+  }
+
   let lastError: unknown;
 
   for (let attempt = 0; attempt < options.maxAttempts; attempt++) {
