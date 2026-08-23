@@ -10,14 +10,20 @@ function sleep(ms: number): Promise<void> {
 export async function withRetry<T>(
   fn: () => Promise<T>,
   options: RetryOptions,
-): Promise<T | undefined> {
-  for (let attempt = 0; attempt <= options.maxAttempts; attempt++) {
+): Promise<T> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < options.maxAttempts; attempt++) {
     try {
       return await fn();
-    } catch {
-      await sleep(options.baseDelayMs * attempt);
+    } catch (error) {
+      lastError = error;
+      const isLastAttempt = attempt === options.maxAttempts - 1;
+      if (!isLastAttempt) {
+        await sleep(options.baseDelayMs * (attempt + 1));
+      }
     }
   }
 
-  return undefined;
+  throw lastError;
 }
