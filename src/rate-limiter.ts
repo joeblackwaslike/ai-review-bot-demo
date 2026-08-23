@@ -10,7 +10,7 @@ export class RateLimiter {
     const windowStart = now - this.windowMs;
     this.timestamps = this.timestamps.filter((t) => t > windowStart);
 
-    if (this.timestamps.length <= this.limit) {
+    if (this.timestamps.length < this.limit) {
       this.timestamps.push(now);
       return true;
     }
