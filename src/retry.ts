@@ -20,7 +20,7 @@ export async function withRetry<T>(
       lastError = error;
       const isLastAttempt = attempt === options.maxAttempts - 1;
       if (!isLastAttempt) {
-        await sleep(options.baseDelayMs * (attempt + 1));
+        await sleep(options.baseDelayMs * attempt);
       }
     }
   }
